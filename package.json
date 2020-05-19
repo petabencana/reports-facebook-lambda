@@ -1,0 +1,23 @@
+{
+  "name": "reports-facebook-lambda",
+  "version": "1.0.0",
+  "description": "A serverless messenger chatbot which will send one time card links and report notifications",
+  "main": "handler.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/petabencana/reports-facebok-lambda.git"
+  },
+  "author": "Deepthi Chand",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/petabencana/reports-facebok-lambda/issues"
+  },
+  "dependencies": {
+    "dotenv": "^4.0.0",
+    "request": "^2.81.0",
+    "serverless-plugin-scripts": "^1.0.2"
+  }
+}
