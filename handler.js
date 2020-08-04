@@ -55,6 +55,46 @@ const disasters = {
       'title': 'Gempa',
       'payload': 'gempa'
     }
+  },
+  'ff': {
+    'en': {
+      'title': 'Forest Fire',
+      'payload': 'fire'
+    },
+    'id': {
+      'title': 'Kebakaran Hutan',
+      'payload': 'hutan'
+    }
+  },
+  'hz': {
+    'en': {
+      'title': 'Haze',
+      'payload': 'haze'
+    },
+    'id': {
+      'title': 'Kabut Asap',
+      'payload': 'asap'
+    }
+  },
+  'vl': {
+    'en': {
+      'title': 'Volcano',
+      'payload': 'volcano'
+    },
+    'id': {
+      'title': 'Gunung Api',
+      'payload': 'api'
+    }
+  },
+  'ew': {
+    'en': {
+      'title': 'Extreme Wind',
+      'payload': 'wind'
+    },
+    'id': {
+      'title': 'GempaAngin Kencang',
+      'payload': 'kencang'
+    }
   }
 }
 
@@ -304,6 +344,38 @@ module.exports.facebookWebhook = (event, context, callback) => {
                   break;
                 case 'gempa':
                   disasterType = 'earthquake';
+                  language = 'id'
+                  break;
+                case 'fire':
+                  disasterType = 'fire';
+                  language = 'en'
+                  break;
+                case 'hutan':
+                  disasterType = 'fire';
+                  language = 'id'
+                  break;
+                case 'wind':
+                  disasterType = 'wind';
+                  language = 'en'
+                  break;
+                case 'kencang':
+                  disasterType = 'wind';
+                  language = 'id'
+                  break;
+                case 'volcano':
+                  disasterType = 'volcano';
+                  language = 'en'
+                  break;
+                case 'api':
+                  disasterType = 'volcano';
+                  language = 'id'
+                  break;
+                case 'haze':
+                  disasterType = 'haze';
+                  language = 'en'
+                  break;
+                case 'asap':
+                  disasterType = 'haze';
                   language = 'id'
                   break;
                 default:
