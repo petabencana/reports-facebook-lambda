@@ -31,8 +31,8 @@ const initiate = {
 };
 
 const report_text = {
-  'en': 'Hi! I’m Disaster Bot! Select the disaster you would like to report',
-  'id': 'Hi! Saya Bencana Bot! Pilih bencana yang ingin kamu laporkan'
+  'en': 'Hi! I’m Disaster Bot! Scroll and select the disaster you would like to report.',
+  'id': 'Hai! Saya Bencana Bot. Geser dan pilih bencana yang ingin kamu laporkan.'
 }
 
 const disasters = {
@@ -48,7 +48,7 @@ const disasters = {
   },
   'eq': {
     'en': {
-      'title': 'EarthQuake',
+      'title': 'Earthquake',
       'payload': 'earthquake'
     },
     'id': {
@@ -92,7 +92,7 @@ const disasters = {
       'payload': 'wind'
     },
     'id': {
-      'title': 'GempaAngin Kencang',
+      'title': 'Angin Kencang',
       'payload': 'kencang'
     }
   }
@@ -111,13 +111,13 @@ const submit_button = {
 // Replies to user
 const replies = {
   'en': 'Hi! Report using this link, thanks.',
-  'id': 'Hi! Laporkan menggunakan link ini. Terima kasih.',
+  'id': 'Hai! Laporkan menggunakan link ini. Terima kasih.',
 };
 
 // Confirmation message to user
 const confirmations = {
   'en': "Hi! Thanks for your report. I've put it on the map.",
-  'id': 'Hi! Terima kasih atas laporan Anda. Aku sudah menaruhnya di peta.',
+  'id': 'Hai! Terima kasih atas laporan Anda. Aku sudah menaruhnya di peta.',
 };
 
 /*
@@ -206,25 +206,41 @@ function constructMenuPayload(senderId, language) {
     recipient: {
       id: senderId
     },
+    messaging_type: "RESPONSE",
     message: {
-      attachment: {
-        type: "template",
-        payload: {
-          template_type: "button",
-          text: report_text[language],
-          buttons: [{
-              "type": "postback",
-              "title": disasters['flood'][language]['title'],
-              "payload": disasters['flood'][language]['payload']
-            },
-            {
-              "type": "postback",
-              "title": disasters['eq'][language]['title'],
-              "payload": disasters['eq'][language]['payload']
-            }
-          ]
+      text: report_text[language],
+      quick_replies: [
+        {
+          "content_type":"text",
+          "title": disasters['flood'][language]['title'],
+          "payload": disasters['flood'][language]['payload']
+        },
+        {
+          "content_type":"text",
+          "title": disasters['eq'][language]['title'],
+          "payload": disasters['eq'][language]['payload']
+        },
+        {
+          "content_type":"text",
+          "title": disasters['vl'][language]['title'],
+          "payload": disasters['vl'][language]['payload']
+        },
+        {
+          "content_type":"text",
+          "title": disasters['ew'][language]['title'],
+          "payload": disasters['ew'][language]['payload']
+        },
+        {
+          "content_type":"text",
+          "title": disasters['ff'][language]['title'],
+          "payload": disasters['ff'][language]['payload']
+        },
+        {
+          "content_type":"text",
+          "title": disasters['hz'][language]['title'],
+          "payload": disasters['hz'][language]['payload']
         }
-      }
+      ]
     }
   }
 }
@@ -266,11 +282,13 @@ module.exports.facebookWebhook = (event, context, callback) => {
   if (event.method === 'POST') {
     event.body.entry.map((entry) => {
       entry.messaging.map((messagingItem) => {
+        var payload = {};
+        var language = process.env.DEFAULT_LANG;
         if (messagingItem.message && messagingItem.message.text && //Code can be removed after updating Petabencana bot because we want to use only menu based communication
           (messagingItem.message.text.toLowerCase().includes('banjir') || messagingItem.message.text.toLowerCase().includes('gempa') ||
             messagingItem.message.text.toLowerCase().includes('flood') || messagingItem.message.text.toLowerCase().includes('earthquake'))) {
           // Form JSON request body
-          var language = process.env.DEFAULT_LANG;
+          language = process.env.DEFAULT_LANG;
           var disasterType = 'flood';
 
           if (messagingItem.message.text.toLowerCase().includes('gempa') || messagingItem.message.text.toLowerCase().includes('earthquake')) {
@@ -283,8 +301,6 @@ module.exports.facebookWebhook = (event, context, callback) => {
           sendDisasterCard(messagingItem.sender.id, disasterType, language);
         }
         else if (messagingItem.postback && messagingItem.postback.payload) {
-          var payload = {};
-          var language = process.env.DEFAULT_LANG;
           switch (messagingItem.postback.payload) {
             case "GET_STARTED_PAYLOAD":
               payload = {
@@ -326,66 +342,66 @@ module.exports.facebookWebhook = (event, context, callback) => {
               payload = constructMenuPayload(messagingItem.sender.id, language);
               console.log("Responding to report with:");
               console.log(payload.message.payload);
-              break;
-            default:
-              var disasterType = "";
-              switch (messagingItem.postback.payload) {
-                case 'flood':
-                  disasterType = 'flood';
-                  language = 'en'
-                  break;
-                case 'banjir':
-                  disasterType = 'flood';
-                  language = 'id'
-                  break;
-                case 'earthquake':
-                  disasterType = 'earthquake';
-                  language = 'en'
-                  break;
-                case 'gempa':
-                  disasterType = 'earthquake';
-                  language = 'id'
-                  break;
-                case 'fire':
-                  disasterType = 'fire';
-                  language = 'en'
-                  break;
-                case 'hutan':
-                  disasterType = 'fire';
-                  language = 'id'
-                  break;
-                case 'wind':
-                  disasterType = 'wind';
-                  language = 'en'
-                  break;
-                case 'kencang':
-                  disasterType = 'wind';
-                  language = 'id'
-                  break;
-                case 'volcano':
-                  disasterType = 'volcano';
-                  language = 'en'
-                  break;
-                case 'api':
-                  disasterType = 'volcano';
-                  language = 'id'
-                  break;
-                case 'haze':
-                  disasterType = 'haze';
-                  language = 'en'
-                  break;
-                case 'asap':
-                  disasterType = 'haze';
-                  language = 'id'
-                  break;
-                default:
-                  break;
-              }
-              sendDisasterCard(messagingItem.sender.id, disasterType, language);
-              break;
+              break; 
+            }
+          }
+          else if (messagingItem.quick_reply && messagingItem.quick_reply.payload) {
+            var disasterType = "";
+            switch (messagingItem.postback.payload) {
+              case 'flood':
+                disasterType = 'flood';
+                language = 'en'
+                break;
+              case 'banjir':
+                disasterType = 'flood';
+                language = 'id'
+                break;
+              case 'earthquake':
+                disasterType = 'earthquake';
+                language = 'en'
+                break;
+              case 'gempa':
+                disasterType = 'earthquake';
+                language = 'id'
+                break;
+              case 'fire':
+                disasterType = 'fire';
+                language = 'en'
+                break;
+              case 'hutan':
+                disasterType = 'fire';
+                language = 'id'
+                break;
+              case 'wind':
+                disasterType = 'wind';
+                language = 'en'
+                break;
+              case 'kencang':
+                disasterType = 'wind';
+                language = 'id'
+                break;
+              case 'volcano':
+                disasterType = 'volcano';
+                language = 'en'
+                break;
+              case 'api':
+                disasterType = 'volcano';
+                language = 'id'
+                break;
+              case 'haze':
+                disasterType = 'haze';
+                language = 'en'
+                break;
+              case 'asap':
+                disasterType = 'haze';
+                language = 'id'
+                break;
+              default:
+                break;
+            }
+            sendDisasterCard(messagingItem.sender.id, disasterType, language);
           }
           sendFacebookMessage(payload);
-        }
       });
     });
   }
